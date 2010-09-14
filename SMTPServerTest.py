@@ -16,6 +16,7 @@ class SMTPServerTest(object):
     self._results       = {}
     self._ehlo_port     = None
     self._ehlo_response = None
+    self._conversation  = False
 
   def get_max_message_size(self):
     size_option = filter(lambda x: x.split(" ")[0] == "250-SIZE",self.ehlo_options)[0]
@@ -42,7 +43,23 @@ class SMTPServerTest(object):
       print str(e)
       return "ehlo failed."
   ehlo = property(get_ehlo)
-    
+  
+  def is_open_relay(self):
+    if not self._conversation:
+      self._conversation = self.get_conversation()
+    relay_results = filter(lambda x: x[:4] == '554',self._conversation.split("\r\n"))[1:]
+    if relay_results > 0:
+      return False
+    return True
+  open_relay = property(is_open_relay)
+  
+  def get_conversation(self):
+    self._conversation = True
+    self.sock.send(self.MESSAGE)
+    self.sock.send("mail from: axdjdiai@akxkskd.com\n")
+    self.sock.send("rcpt to: aserjslkejrlskj@laslkjelrkjlekj.com\n")
+    return self.sock.recv(1024)
+  
   def connect(self):
     if self._tried:
         return self._results
@@ -70,3 +87,4 @@ if __name__ == "__main__":
     print("EHLO options %s" % ", ".join(s.ehlo_options))
     print("TLS Supported? %s" % s.server_supports_tls)
     print("Max message size: %d MB" % s.server_max_message_size)
+    print("Open relay? %s" % s.open_relay)
