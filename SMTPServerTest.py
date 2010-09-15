@@ -46,14 +46,14 @@ class SMTPServerTest(object):
   
   def is_open_relay(self):
     if not self._conversation:
-      self._conversation = self.get_conversation()
-    relay_results = filter(lambda x: x[:4] == '554',self._conversation.split("\r\n"))[1:]
-    if relay_results > 0:
+      self._conversation = self.have_conversation()
+    relay_results = filter(lambda x: x[:3] == '250',self._conversation.split("\r\n"))[1:]
+    if len(relay_results) > 0:
       return False
     return True
   open_relay = property(is_open_relay)
   
-  def get_conversation(self):
+  def have_conversation(self):
     self._conversation = True
     self.sock.send(self.MESSAGE)
     self.sock.send("mail from: axdjdiai@akxkskd.com\n")
