@@ -22,7 +22,7 @@ Talking to the server
       print("EHLO options %s" % ", ".join(s.ehlo_options))
       print("TLS Supported? %s" % s.server_supports_tls)
       print("Max message size: %d MB" % s.server_max_message_size)
-
+      print("Open relay? %s" % s.open_relay)
 
 Testing a server for a response on port 25 (standard SMTP)
 --
