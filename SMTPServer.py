@@ -64,7 +64,8 @@ class SMTPServer(object):
     ehlo_options = property(parse_ehlo)
 
     def get_ehlo(self):
-      self.connect()
+      if not self.connected:
+        self.connect()
       try:
         self.sock.send(self._message)
         return self.sock.recv(1024)
