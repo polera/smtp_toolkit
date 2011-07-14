@@ -78,6 +78,7 @@ class SMTPServer(object):
       if not self._conversation:
         self._conversation = self.have_relay_conversation()
       relay_results = filter(lambda x: x.replace("-"," ").lower().find('250 ok') != -1,self._conversation.split("\r\n"))[1:]
+      self.close()
       if len(relay_results) > 0:
         return True
       return False
@@ -108,6 +109,7 @@ class SMTPServer(object):
     def close(self):
         self.sock.send("quit")
         self._socket = None
+        self._connected = False
         return True
 
     def get_results(self):
@@ -125,10 +127,10 @@ if __name__ == "__main__":
     print("Attepmting to connect to %s on port %d" % (server['server_name'],server['port']))
     s = SMTPServer(server['server_name'], server['port'], ipv6=server['try_v6'])
     try:
+        print("Open relay? %s" % s.open_relay)
         print("EHLO options: %s" % ",".join(s.ehlo_options))
         print("TLS Supported? %s" % s.server_supports_tls)
         print("Max message size: %d MB" % s.server_max_message_size)
-        print("Open relay? %s" % s.open_relay)
         print s.results, "\n"
     except SMTPConnectionFailed as error:
         print("""Error connection failed.  This means that the server is down, or your ISP does not allow you to
