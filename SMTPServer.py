@@ -76,13 +76,15 @@ class SMTPServer(object):
     def is_open_relay(self):
       if not self._conversation:
         self._conversation = self.have_relay_conversation()
-      relay_results = filter(lambda x: x[:3] == '250',self._conversation.split("\r\n"))[1:]
+      relay_results = filter(lambda x: x.replace("-"," ").lower().find('250 ok') != -1,self._conversation.split("\r\n"))[1:]
       if len(relay_results) > 0:
-        return False
-      return True
+        return True
+      return False
     open_relay = property(is_open_relay)
 
     def have_relay_conversation(self):
+      if not self._connected:
+          self.connect()
       self._conversation = True
       self.sock.send(self._message)
       self.sock.send("mail from: axdjdiai@akxkskd.com\n")
