@@ -44,8 +44,11 @@ class SMTPServer(object):
           size_option = filter(lambda x: x.split(" ")[0] == "250-SIZE",self.ehlo_options)[0]
           splitter = "250-SIZE"
       except IndexError:
-          size_option = filter(lambda x: x.split("250 SIZE")[0] == "",self.ehlo_options)[0]
-          splitter = "250 SIZE"
+          try:
+              size_option = filter(lambda x: x.split("250 SIZE")[0] == "",self.ehlo_options)[0]
+              splitter = "250 SIZE"
+          except IndexError:
+              return 0
       size_bytes = size_option.split(splitter)[1]
       return long(size_bytes)/1024.0/1024.0
     server_max_message_size = property(get_max_message_size)
@@ -57,7 +60,7 @@ class SMTPServer(object):
     def parse_ehlo(self):
       if not self._ehlo_response:
         self._ehlo_response = self.get_ehlo()
-      return filter(lambda x: x[:3] == '250',self._ehlo_response.split("\r\n"))[1:]
+      return filter(lambda x: x[:3] == '250',self._ehlo_response.split("\r\n"))
     ehlo_options = property(parse_ehlo)
 
     def get_ehlo(self):
