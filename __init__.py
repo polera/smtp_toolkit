@@ -1,1 +1,1 @@
-from SMTPServerTest import SMTPServerTest
+from SMTPServer import SMTPServer

@@ -11,13 +11,13 @@ Usage
 
 Talking to the server
 --
-    from smtp_toolkit import SMTPServerTest
+    from smtp_toolkit import SMTPServer
 
-    server_list = ['smtp.gmail.com']
+    server_list = ['smtp.gmail.com', 'mail.optonline.net']
   
     for server in server_list:
       print(server)
-      s = SMTPServerTest(server)
+      s = SMTPServer(server)
       print(s.results)
       print("EHLO options %s" % ", ".join(s.ehlo_options))
       print("TLS Supported? %s" % s.server_supports_tls)
@@ -27,14 +27,14 @@ Talking to the server
 Testing a server for a response on port 25 (standard SMTP)
 --
 
-    from smtp_toolkit import SMTPServerTest
-    server = SMTPServerTest('your.server.com')
+    from smtp_toolkit import SMTPServer
+    server = SMTPServer('your.server.com')
     print(server.results)
     
 Testing a server for a response on port 25 + additional ports
 --
 
-    from smtp_toolkit import SMTPServerTest
-    server = SMTPServerTest('your.server.com',[587,987,])
+    from smtp_toolkit import SMTPServer
+    server = SMTPServer('your.server.com',[587,987,])
     print(server.results)
     
