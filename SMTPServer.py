@@ -3,12 +3,14 @@ import socket
 # Default timeout
 socket.setdefaulttimeout(2.5)
 
+
 class SMTPConnectionFailed(Exception):
     pass
 
+
 class SMTPServer(object):
 
-    def __init__(self, server_name, port=587, message='ehlo polera.org\r\n', ipv6=False):
+    def __init__(self, server_name, port=587, message='ehlo localhost\r\n', ipv6=False):
         self.server = server_name
         self.port = port
         self.ipv6 = ipv6
@@ -27,7 +29,7 @@ class SMTPServer(object):
         else:
             return "IPv4"
     ip_version = property(get_ip_version)
-    
+
     def get_socket(self):
         if self._socket:
             return self._socket
@@ -38,7 +40,7 @@ class SMTPServer(object):
                 self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             return self._socket
     sock = property(get_socket)
-    
+
     def get_max_message_size(self):
       try:
           size_option = filter(lambda x: x.split(" ")[0] == "250-SIZE",self.ehlo_options)[0]
@@ -77,7 +79,8 @@ class SMTPServer(object):
     def is_open_relay(self):
       if not self._conversation:
         self._conversation = self.have_relay_conversation()
-      relay_results = filter(lambda x: x.replace("-"," ").lower().find('250 ok') != -1,self._conversation.split("\r\n"))[1:]
+      relay_results = filter(lambda x: x.replace("-", " ").lower().find('250 ok') != -1,
+                             self._conversation.split("\r\n"))[1:]
       self.close()
       if len(relay_results) > 0:
         return True
@@ -120,15 +123,15 @@ class SMTPServer(object):
 
 
 if __name__ == "__main__":
-  server_list = [{'server_name':'mail.optonline.net','port':25, 'try_v6':False},
-                 {'server_name':'smtp.gmail.com','port':587, 'try_v6':False},
-                 {'server_name':'he.net', 'port':25, 'try_v6':True}]
+  server_list = [{'server_name': 'mail.optonline.net','port': 25, 'try_v6': False},
+                 {'server_name': 'smtp.gmail.com','port': 587, 'try_v6': False},
+                 {'server_name': 'he.net', 'port': 25, 'try_v6': True}]
   for server in server_list:
     print("Attepmting to connect to %s on port %d" % (server['server_name'],server['port']))
     s = SMTPServer(server['server_name'], server['port'], ipv6=server['try_v6'])
     try:
         print("Open relay? %s" % s.open_relay)
-        print("EHLO options: %s" % ",".join(s.ehlo_options))
+        print("EHLO options: %s" % ",\n".join(s.ehlo_options))
         print("TLS Supported? %s" % s.server_supports_tls)
         print("Max message size: %d MB" % s.server_max_message_size)
         print s.results, "\n"
