@@ -4,7 +4,7 @@ The goal of smtp_toolkit is to provide a set of classes that facilitate testing 
 
 Author
 ==
-James Polera <james@listbot.org>
+James Polera <james@uncryptic.com>
 
 Usage
 ==
